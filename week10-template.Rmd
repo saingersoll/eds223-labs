@@ -95,7 +95,7 @@ Load in the vegetation survey data and find the maximum tree height in each plot
 options(stringsAsFactors = FALSE)  # this controls our data when being read in
 veg_surveys <- read.csv((here("./week10/VegetationData/D17_2013_vegStr.csv"))) %>% 
   group_by(plotid) %>% 
-  summarize('survey height' = max(stemheight, na.rm = TRUE))     # one output of max height for plot ids
+  summarize('survey_height' = max(stemheight, na.rm = TRUE))     # one output of max height for plot ids
 
 # now we only have 18 observations
 
