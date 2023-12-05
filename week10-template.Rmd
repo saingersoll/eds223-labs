@@ -44,17 +44,16 @@ library(tidyverse)
 library(tmap)
 library(here)
 
-here::i_am("labs/week10-template.Rmd")
+here::i_am("eds223-labs/week10-template.Rmd")
 ```
 
 Load Lidar data. 
-```{r load-lidar}
 ```{r load-lidar}
 # digital surface model (DSM)
 dsm <- rast(here("./week10/SJER2013_DSM.tif"))
 
 # digital terrain model (DTM)
-dtm <- rast("./week10/SJER2013_DTM.tif")
+dtm <- rast(here("./week10/SJER2013_DTM.tif"))
 
 ```
 
@@ -76,7 +75,7 @@ plot(chm)
 Load the vegetation survey data, including the locations of study plots and the surveys of individual trees in each plot.
 ```{r load-centroids}
 # read in plot centroids
-plot_centroids <- st_read("./week10/PlotCentroids/SJERPlotCentroids_Buffer.shp")
+plot_centroids <- st_read(here("./week10/PlotCentroids/SJERPlotCentroids_Buffer.shp"))
 
 
 # test if the plot CRS matches the Lidar CRS
@@ -94,7 +93,7 @@ Load in the vegetation survey data and find the maximum tree height in each plot
 ```{r load-surveys}
 # read in the vegetation surveys, which include the height of each tree
 options(stringsAsFactors = FALSE)  # this controls our data when being read in
-veg_surveys <- read.csv(("./week10/VegetationData/D17_2013_vegStr.csv")) %>% 
+veg_surveys <- read.csv((here("./week10/VegetationData/D17_2013_vegStr.csv"))) %>% 
   group_by(plotid) %>% 
   summarize('survey height' = max(stemheight, na.rm = TRUE))     # one output of max height for plot ids
 
@@ -108,7 +107,7 @@ extract_chm_height <- terra::extract(chm, plot_centroids, fun = max) %>%
 
 # read in survey data and find the maximum tree height in each plot
 height_estimates <- cbind(plot_centroids, extract_chm_height) %>% 
-  left_join(., veg_surveys, by = c('Plot_ID)' = 'plotid'))
+  left_join(., veg_surveys, by = c('Plot_ID' = 'plotid'))
 ```
 
 Now find the maximum tree height in each plot as determined by the CHM.
@@ -116,7 +115,7 @@ Now find the maximum tree height in each plot as determined by the CHM.
 
 ggplot(height_estimates, aes(x = survey_height, y = chm_height)) +
 geom_point(color = 'pink') +
-  geom_Smooth(method = lm) +
+  geom_smooth(method = lm) +
   geom_abline(slope = 1, intercept = 0, color = 'magenta') +
   labs(x = 'Maximum Tree Height - Survey (m)',
        y = 'Maximum Tree Height - LiDAR (m)')
